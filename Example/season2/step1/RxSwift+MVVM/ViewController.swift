@@ -12,14 +12,14 @@ import UIKit
 
 let MEMBER_LIST_URL = "https://my.api.mockaroo.com/members_with_avatar.json?key=44ce18f0"
 
-class 나중에생기는데이터<T> {
+class 나중에생기는데이터<T> {    // 나중에생기는데이터 = Observable
     private let task: (@escaping (T) -> Void) -> Void
     
     init(task: @escaping (@escaping (T) -> Void) -> Void) {
         self.task = task
     }
     
-    func 나중에생기면(_ f: @escaping (T) -> Void) {
+    func 나중에생기면(_ f: @escaping (T) -> Void) {   // 나중에생기면 = subscribe
         task(f)
     }
 }
@@ -69,11 +69,11 @@ class ViewController: UIViewController {
         self.setVisibleWithAnimation(self.activityIndicator, true)
         
         downloadJson(MEMBER_LIST_URL)
-            .subscribe { event in
+            .subscribe { [weak self] event in
                 switch event {
                 case .next(let json):
-                    self.editView.text = json
-                    self.setVisibleWithAnimation(self.activityIndicator, false)
+                    self?.editView.text = json
+                    self?.setVisibleWithAnimation(self?.activityIndicator, false)
                 case .completed:
                     break
                 case .error:
