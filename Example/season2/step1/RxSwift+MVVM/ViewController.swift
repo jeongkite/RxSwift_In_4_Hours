@@ -53,6 +53,7 @@ class ViewController: UIViewController {
                 
                 DispatchQueue.main.async {
                     f.onNext(json)
+                    f.onCompleted()
                 }
             }
             
@@ -69,11 +70,11 @@ class ViewController: UIViewController {
         self.setVisibleWithAnimation(self.activityIndicator, true)
         
         downloadJson(MEMBER_LIST_URL)
-            .subscribe { [weak self] event in
+            .subscribe { event in
                 switch event {
                 case .next(let json):
-                    self?.editView.text = json
-                    self?.setVisibleWithAnimation(self?.activityIndicator, false)
+                    self.editView.text = json
+                    self.setVisibleWithAnimation(self.activityIndicator, false)
                 case .completed:
                     break
                 case .error:
