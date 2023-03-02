@@ -86,20 +86,19 @@ class ViewController: UIViewController {
         self.setVisibleWithAnimation(self.activityIndicator, true)
         
         // 2. Observable로 오는 데이터를 받아서 처리하는 방법
-        let observe = downloadJson(MEMBER_LIST_URL)
-        let disp = observe.subscribe { event in
-                switch event {
-                case .next(let json):
-                    DispatchQueue.main.async {
-                        self.editView.text = json
-                        self.setVisibleWithAnimation(self.activityIndicator, false)
-                    }
-                case .completed:
-                    break
-                case .error:
-                    break
+        _ = downloadJson(MEMBER_LIST_URL)
+            .subscribe{ event in
+            switch event {
+            case .next(let json):
+                DispatchQueue.main.async {
+                    self.editView.text = json
+                    self.setVisibleWithAnimation(self.activityIndicator, false)
                 }
+            case .error(let err):
+                break
+            case .completed:
+                break
             }
-        disp.dispose()
+        }
     }
 }
