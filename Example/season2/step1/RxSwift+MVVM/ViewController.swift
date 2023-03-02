@@ -52,7 +52,7 @@ class ViewController: UIViewController {
     ///  4. onCompleted  /  onError
     ///  5. Disposed
     
-    func downloadJson(_ url: String) -> Observable<String?> {
+    func downloadJson(_ url: String) -> Observable<String> {
         return Observable.create() { emitter in
             let url = URL(string: url)!
             let task = URLSession.shared.dataTask(with: url) { (data, _, err) in
@@ -85,10 +85,10 @@ class ViewController: UIViewController {
         self.setVisibleWithAnimation(self.activityIndicator, true)
         
         // 2. Observable로 오는 데이터를 받아서 처리하는 방법
-        downloadJson(MEMBER_LIST_URL)
-            .map { json in json?.count ?? 0 }
-            .filter { count in count > 0 }
-            .map { "\($0)" }
+        let jsonObservable = downloadJson(MEMBER_LIST_URL)
+        let helloObservable = Observable.just("Hello World")
+        
+        Observable.zip(jsonObservable, helloObservable) { $1 + "\n" + $0 }
             .observeOn(MainScheduler.instance)  // suger : operator
             .subscribe(onNext: { json in
                 self.editView.text = json
