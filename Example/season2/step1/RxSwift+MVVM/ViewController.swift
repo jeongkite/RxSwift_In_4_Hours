@@ -86,6 +86,9 @@ class ViewController: UIViewController {
         
         // 2. Observable로 오는 데이터를 받아서 처리하는 방법
         downloadJson(MEMBER_LIST_URL)
+            .map { json in json?.count ?? 0 }
+            .filter { count in count > 0 }
+            .map { "\($0)" }
             .observeOn(MainScheduler.instance)  // suger : operator
             .subscribe(onNext: { json in
                 self.editView.text = json
