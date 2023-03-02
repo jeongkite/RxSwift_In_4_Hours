@@ -27,14 +27,14 @@ class 나중에생기는데이터<T> {    // 나중에생기는데이터 = Obser
 class ViewController: UIViewController {
     @IBOutlet var timerLabel: UILabel!
     @IBOutlet var editView: UITextView!
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
             self?.timerLabel.text = "\(Date().timeIntervalSince1970)"
         }
     }
-
+    
     private func setVisibleWithAnimation(_ v: UIView?, _ s: Bool) {
         guard let v = v else { return }
         UIView.animate(withDuration: 0.3, animations: { [weak v] in
@@ -53,29 +53,43 @@ class ViewController: UIViewController {
     ///  5. Disposed
     
     func downloadJson(_ url: String) -> Observable<String?> {
-        // 데이터를 하나만 보내는 경우 더 간단하게 쓰는 방법
-//        return Observable.just("Hello World")
-        // 간단하게 보내고 싶은데 데이터가 하나가 아닐 때
-        return Observable.from(["Hello", "World"])
-//        return Observable.create() { emitter in
-//            emitter.onNext("Hello World")
-//            emitter.onCompleted()
-//            return Disposables.create()
-//        }
+        return Observable.create() { emitter in
+            let url = URL(string: url)!
+            let task = URLSession.shared.dataTask(with: url) { (data, _, err) in
+                guard err == nil else {
+                    emitter.onError(err!)
+                    return
+                }
+                
+                if let dat = data, let json = String(data: dat, encoding: .utf8) {
+                    emitter.onNext(json)
+                }
+                
+                emitter.onCompleted()
+            }
+            
+            task.resume()
+            
+            return Disposables.create() {
+                task.cancel()
+            }
+        }
     }
-
+    
     // MARK: SYNC
-
+    
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
-
+    
     @IBAction func onLoad() {
         editView.text = ""
         self.setVisibleWithAnimation(self.activityIndicator, true)
         
         // 2. Observable로 오는 데이터를 받아서 처리하는 방법
-        _ = downloadJson(MEMBER_LIST_URL)
-            .subscribe(onNext: { print($0) },
-                       onError: { err in print(err) },
-                       onCompleted: { print("Complete") } )
+        downloadJson(MEMBER_LIST_URL)
+            .observeOn(MainScheduler.instance)  // suger : operator
+            .subscribe(onNext: { json in
+                self.editView.text = json
+                self.setVisibleWithAnimation(self.activityIndicator, false)
+            })
     }
 }
