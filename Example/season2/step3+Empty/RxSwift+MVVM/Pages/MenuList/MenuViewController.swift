@@ -23,14 +23,12 @@ class MenuViewController: UIViewController {
         
         viewModel.itemsCount
             .map { "\($0)" }
-            .subscribe(onNext: {
-                self.itemCountLabel.text = $0
-            })
+            .bind(to: itemCountLabel.rx.text)       // bind 사용하기
             .disposed(by: disposeBag)
         viewModel.totalPrice
             .map { $0.currencyKR() }
-            .subscribe(onNext: {
-                self.totalPrice.text = $0
+            .subscribe(onNext: { [weak self] in     // 순환참조 피하기
+                self?.totalPrice.text = $0
             })
             .disposed(by: disposeBag)
     }
