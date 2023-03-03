@@ -21,5 +21,5 @@ class MenuListViewModel {
     ]
     
     var itemsCount: Int = 3
-    var totalPrice: Observable<Int> = Observable.just(1_000)
+    var totalPrice: PublishSubject<Int> = PublishSubject()
 }
