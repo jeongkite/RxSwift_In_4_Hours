@@ -35,8 +35,25 @@ class MenuListViewModel {
     func clearAllItemSelections() {
         _ = menuObservable
             .map { menus in
-                return menus.map { m in
-                    Menu(name: m.name, price: m.price, count: 0)
+                menus.map { m in
+                    Menu(id: m.id, name: m.name, price: m.price, count: 0)
+                }
+            }
+            .take(1)
+            .subscribe(onNext: {
+                self.menuObservable.onNext($0)
+            })
+    }
+    
+    func changeCount(item: Menu, increase: Int) {
+        _ = menuObservable
+            .map { menus in
+                menus.map { m in
+                    if m.id == item.id {
+                        return Menu(id: m.id, name: m.name, price: m.price, count: m.count + increase)
+                    } else {
+                        return Menu(id: m.id, name: m.name, price: m.price, count: m.count)
+                    }
                 }
             }
             .take(1)

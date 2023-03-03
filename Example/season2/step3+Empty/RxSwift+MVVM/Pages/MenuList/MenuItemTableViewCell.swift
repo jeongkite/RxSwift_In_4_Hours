@@ -13,12 +13,13 @@ class MenuItemTableViewCell: UITableViewCell {
     @IBOutlet var count: UILabel!
     @IBOutlet var price: UILabel!
     
-    var viewModel: MenuListViewModel!
+    var onChange: ((Int) -> Void)?
 
     @IBAction func onIncreaseCount() {
-        viewModel.increaseCount(self)   // 이런식으로 데이터를 넘겨서 업데이트 하는 방법도 있을 것.
+        onChange?(+1)
     }
 
     @IBAction func onDecreaseCount() {
+        onChange?(-1)
     }
 }
