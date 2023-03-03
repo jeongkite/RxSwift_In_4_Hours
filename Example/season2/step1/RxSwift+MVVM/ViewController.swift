@@ -28,19 +28,13 @@ class ViewController: UIViewController {
     @IBOutlet var timerLabel: UILabel!
     @IBOutlet var editView: UITextView!
     
-    var disposable: [Disposable] = []
+    var disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
             self?.timerLabel.text = "\(Date().timeIntervalSince1970)"
         }
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        disposable.forEach { $0.dispose() }
     }
     
     private func setVisibleWithAnimation(_ v: UIView?, _ s: Bool) {
@@ -96,12 +90,12 @@ class ViewController: UIViewController {
         let jsonObservable = downloadJson(MEMBER_LIST_URL)
         let helloObservable = Observable.just("Hello World")
         
-        let downloadJsonDispose = Observable.zip(jsonObservable, helloObservable) { $1 + "\n" + $0 }
+        Observable.zip(jsonObservable, helloObservable) { $1 + "\n" + $0 }
             .observeOn(MainScheduler.instance)  // suger : operator
             .subscribe(onNext: { json in
                 self.editView.text = json
                 self.setVisibleWithAnimation(self.activityIndicator, false)
             })
-        disposable.append(downloadJsonDispose)
+            .disposed(by: disposeBag)
     }
 }
