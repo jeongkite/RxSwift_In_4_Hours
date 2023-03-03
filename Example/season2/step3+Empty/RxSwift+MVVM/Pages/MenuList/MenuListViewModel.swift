@@ -31,4 +31,17 @@ class MenuListViewModel {
         ]
         menuObservable.onNext(menus)
     }
+    
+    func clearAllItemSelections() {
+        _ = menuObservable
+            .map { menus in
+                return menus.map { m in
+                    Menu(name: m.name, price: m.price, count: 0)
+                }
+            }
+            .take(1)
+            .subscribe(onNext: {
+                self.menuObservable.onNext($0)
+            })
+    }
 }
