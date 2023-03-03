@@ -14,6 +14,7 @@ import RxCocoa
 class MenuViewController: UIViewController {
     
     let viewModel = MenuListViewModel()
+    var disposeBag = DisposeBag()
     
     // MARK: - Life Cycle
 
@@ -21,6 +22,12 @@ class MenuViewController: UIViewController {
         super.viewDidLoad()
         
         updateUI()
+        viewModel.totalPrice
+            .map { $0.currencyKR() }
+            .subscribe(onNext: {
+                self.totalPrice.text = $0
+            })
+            .disposed(by: disposeBag)
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -51,13 +58,12 @@ class MenuViewController: UIViewController {
         // TODO: no selection
         // showAlert("Order Fail", "No Orders")
 //        performSegue(withIdentifier: "OrderViewController", sender: nil)
-        viewModel.totalPrice += 100
-        updateUI()
+        viewModel.totalPrice
     }
     
     func updateUI() {
         itemCountLabel.text = "\(viewModel.itemsCount)"
-        totalPrice.text = viewModel.totalPrice.currencyKR()
+//        totalPrice.text = viewModel.totalPrice.currencyKR()
     }
 }
 
