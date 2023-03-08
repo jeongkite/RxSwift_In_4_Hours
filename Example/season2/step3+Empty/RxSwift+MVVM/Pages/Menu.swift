@@ -10,8 +10,14 @@ import Foundation
 
 // ViewModel : View를 표현하기 위한 모델
 struct Menu {
-    var id: UUID = UUID()
+    var id: Int
     var name: String
     var price: Int
     var count: Int
+}
+
+extension Menu {
+    static func fromMenuItems(id: Int, item: MenuItem) -> Menu {
+        return Menu(id: id, name: item.name, price: item.price, count: 0)
+    }
 }
