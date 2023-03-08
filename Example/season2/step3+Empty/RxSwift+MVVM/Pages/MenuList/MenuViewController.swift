@@ -81,11 +81,12 @@ class MenuViewController: UIViewController {
         // TODO: no selection
         // showAlert("Order Fail", "No Orders")
 //        performSegue(withIdentifier: "OrderViewController", sender: nil)
-        viewModel.menuObservable.onNext([
-            Menu(name: "chaged", price: Int.random(in: 100...1000), count: Int.random(in: 0...3)),
-            Menu(name: "chaged", price: Int.random(in: 100...1000), count: Int.random(in: 0...3)),
-            Menu(name: "chaged", price: Int.random(in: 100...1000), count: Int.random(in: 0...3)),
-            Menu(name: "chaged", price: Int.random(in: 100...1000), count: Int.random(in: 0...3))
-        ])
+//        viewModel.menuObservable.onNext([
+//            Menu(name: "chaged", price: Int.random(in: 100...1000), count: Int.random(in: 0...3)),
+//            Menu(name: "chaged", price: Int.random(in: 100...1000), count: Int.random(in: 0...3)),
+//            Menu(name: "chaged", price: Int.random(in: 100...1000), count: Int.random(in: 0...3)),
+//            Menu(name: "chaged", price: Int.random(in: 100...1000), count: Int.random(in: 0...3))
+//        ])
+        viewModel.onOrder()
     }
 }
