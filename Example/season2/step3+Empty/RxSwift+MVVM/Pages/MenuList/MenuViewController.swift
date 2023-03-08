@@ -49,14 +49,18 @@ class MenuViewController: UIViewController {
         
         viewModel.itemsCount
             .map { "\($0)" }
+        // 1. 에러 발생 시, 그냥 빈문자열로 대체
+            .catchErrorJustReturn("")
             .observeOn(MainScheduler.instance)
             .bind(to: itemCountLabel.rx.text)
             .disposed(by: disposeBag)
         
         viewModel.totalPrice
             .map { $0.currencyKR() }
-            .observeOn(MainScheduler.instance)
-            .bind(to: totalPrice.rx.text)
+        // 2. 에러 발생, 발생하지 않은 경우 나누어 처리,
+        // + Drive는 항상 메인에서 처리
+            .asDriver(onErrorJustReturn: "")
+            .drive(totalPrice.rx.text)
             .disposed(by: disposeBag)
     }
 

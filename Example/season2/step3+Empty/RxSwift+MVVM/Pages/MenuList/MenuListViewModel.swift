@@ -9,10 +9,11 @@
 import Foundation
 
 import RxSwift
+import RxRelay
 
 class MenuListViewModel {
     
-    var menuObservable = BehaviorSubject<[Menu]>(value: [])
+    var menuObservable = BehaviorRelay<[Menu]>(value: [])
     
     lazy var itemsCount = menuObservable.map {
         $0.map { $0.count }.reduce(0, +)
@@ -51,7 +52,7 @@ class MenuListViewModel {
             }
             .take(1)
             .subscribe(onNext: {
-                self.menuObservable.onNext($0)
+                self.menuObservable.accept($0)
             })
     }
     
@@ -68,7 +69,7 @@ class MenuListViewModel {
             }
             .take(1)
             .subscribe(onNext: {
-                self.menuObservable.onNext($0)
+                self.menuObservable.accept($0)
             })
     }
     
